@@ -32,16 +32,17 @@ public class risingCity {
 
     // Remove building if the executed time equal to total time
     private static void RemoveAtTime(FileWriter outputWriter, minHeap.HeapNode node) {
-        if (building.executed_time == building.total_time) {
-            System.out.println("(" + building.buildingNum + "," + current_day + ")");
-            try {
-                outputWriter.write("(" + building.buildingNum + "," + current_day + ")\n");
+        if (building != null) {
+            if (building.executed_time == building.total_time) {
+                System.out.println("(" + building.buildingNum + "," + current_day + ")");
+                try {
+                    outputWriter.write("(" + building.buildingNum + "," + current_day + ")\n");
+                } catch (IOException e) {
+                    System.out.println("Cannot write to file");
+                }
+                Remove(building.buildingNum);
+                building = null;
             }
-            catch (IOException e) {
-                System.out.println("Cannot write to file");
-            }
-            Remove(building.buildingNum);
-            building = null;
         }
     }
 
@@ -101,18 +102,11 @@ public class risingCity {
             days_on_construction = 0;
             return dayRemain;
         }
-        // If the given time is lesser than the time to finish the current task, all given time is spent on the task
-        else if (days_on_construction > dayPassed) {
+        // If the given time is lesser than or equal the time to finish the current task, all given time is spent on the task
+        else {
             current_day = current_day + dayPassed;
             heap.increaseExecutedTime(building, dayPassed);
             days_on_construction = days_on_construction - dayPassed;
-            return 0;
-        }
-        // If the given time is the same as the time intended to spend on the task, return and check for the command before remove node if necessary
-        else {
-            current_day = current_day + days_on_construction;
-            heap.increaseExecutedTime(building, days_on_construction);
-            days_on_construction = 0;
             return 0;
         }
     }
@@ -136,6 +130,7 @@ public class risingCity {
                 while (day_passed > 0) {
                     day_passed = Update(outputWriter, day_passed);
                 }
+
                 // Insert building to the data structure
                 if (s.contains("Insert(")) {
                     int buildingNum = Integer.parseInt(s.split("\\(")[1].split(",")[0]);
@@ -146,6 +141,7 @@ public class risingCity {
                         RemoveAtTime(outputWriter, building);
                     }
                 }
+
                 // Print buildings based on the query
                 else if (s.contains("Print")) {
                     // Print range of buildings
@@ -179,6 +175,7 @@ public class risingCity {
                     RemoveAtTime(outputWriter, building);
                 }
             }
+            RemoveAtTime(outputWriter, building);
 
             outputWriter.flush();
             outputWriter.close();
