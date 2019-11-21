@@ -17,14 +17,12 @@ public class minHeap {
         int buildingNum;            // building number
         int executed_time;          // executed time
         int total_time;             // total time to finished
-        RedBlackTree.Node RBTNode;  // pointer to the RBT node
 
         public HeapNode(int buildingNum) {
             this.key = -1;
             this.buildingNum = buildingNum;
             this.total_time = 0;
             this.executed_time = 0;
-            this.RBTNode = null;
         }
     }
 
@@ -110,7 +108,8 @@ public class minHeap {
     // Increase min node executed time
     public static void increaseExecutedTime(HeapNode node, int time) {
         node.executed_time = node.executed_time + time;
-        node.RBTNode.executed_time = node.executed_time;
+        RedBlackTree.Node RBT_Node = RedBlackTree.findNode(node.buildingNum);
+        RBT_Node.executed_time = node.executed_time;
         // After increasing the executed time, we need to fix the heap by heapify
         heapify(node);
     }

@@ -17,7 +17,6 @@ public class risingCity {
         RedBlackTree.Node node = RedBlackTree.initNode(buildingNum,total_time);
         minHeap.HeapNode heapNode = minHeap.initNode(buildingNum,total_time);
         node.heapNode = heapNode;
-        heapNode.RBTNode = node;
         RedBlackTree.insert(node);
         minHeap.insert(heapNode);
     }
