@@ -3,13 +3,11 @@ import java.io.IOException;
 
 public class RedBlackTree{
 
-    final static int RED = 0;
-    final static int BLACK = 1;
-    final static int LEFT = 0;
-    final static int RIGHT = 1;
-
+    final static int RED = 0;       // Color red
+    final static int BLACK = 1;     // Color black
+    final static int LEFT = 0;      // Variable defined the scenario in insertion
+    final static int RIGHT = 1;     // Variable defined the scenario in insertion
     static boolean first = true;    // boolean value for printing
-
     static Node root;               // root of the tree
 
     static class Node {
@@ -98,17 +96,21 @@ public class RedBlackTree{
         node1.key = node2.key;
         node2.key = tempkey;
 
-        int tempBuildingNum= node1.buildingNum;
+        int tempBuildingNum = node1.buildingNum;
         node1.buildingNum = node2.buildingNum;
         node2.buildingNum = tempBuildingNum;
 
-        int temp_executed_time= node1.executed_time;
+        int temp_executed_time = node1.executed_time;
         node1.executed_time = node2.executed_time;
         node2.executed_time = temp_executed_time;
 
-        int temp_total_time= node1.total_time;
+        int temp_total_time = node1.total_time;
         node1.total_time = node2.total_time;
         node2.total_time = temp_total_time;
+
+        minHeap.HeapNode temp_heapNode = node1.heapNode;
+        node1.heapNode = node2.heapNode;
+        node2.heapNode = temp_heapNode;
     }
 
     // Insert node to Tree
@@ -164,12 +166,13 @@ public class RedBlackTree{
 
         // If not found, then return.
         if (temp == null) {
-            System.out.println("No building of building number " + key + " to remove");
+//            System.out.println("No building of building number " + key + " to remove");
             return;
         }
 
         // removeNode is the non-degree-2 node to be removed
         Node removeNode = findNextNode(temp);
+
         swapData(temp,removeNode);
 
         Node parent = removeNode.parent;
@@ -221,7 +224,6 @@ public class RedBlackTree{
 
     // Count the number of red children of a node
     private static int countRedChild(Node node) {
-
         if (node.left.color == RED && node.right.color == RED){
             return 2;
         }
@@ -414,7 +416,6 @@ public class RedBlackTree{
                                 leftRotate(sibling);
                             }
                         }
-//                        System.out.println("Case LR1");
                         break;
                     case 2:
                         sibling.left.left.color = BLACK;
@@ -422,7 +423,6 @@ public class RedBlackTree{
                         rightRotate(sibling.parent.left);
                         leftRotate(sibling.parent.parent);
                         leftRotate(sibling);
-//                        System.out.println("Case LR2");
                         break;
                 }
             }
@@ -552,32 +552,28 @@ public class RedBlackTree{
     }
 
     ///////////////////// Printing functions ///////////////////////////////////////
-    // Search based on buildingNumber
-    private static void searchQuery(FileWriter outputWriter, Node node, int buildingNumber) {
-        if(node.key==-1){
-            System.out.println("(0,0,0)");
-            return;
-        }
-        if (node.buildingNum < buildingNumber) {
-            searchQuery(outputWriter, node.right, buildingNumber);
-        }
-        else if (node.buildingNum > buildingNumber) {
-            searchQuery(outputWriter, node.left, buildingNumber);
-        }
-        else {
-            System.out.println("(" + node.key + "," + node.executed_time + "," + node.total_time + ")");
-            try {
-                outputWriter.write("(" + node.key + "," + node.executed_time + "," + node.total_time + ")\n");
-            }
-            catch (IOException e) {
-                System.out.println("Cannot write to file");
-            }
-        }
-    }
-
     // The printBuilding in based on buildingNumber
     public static void PrintBuilding(FileWriter outputWriter, int buildingNumber) {
-        searchQuery(outputWriter, root, buildingNumber);
+        try {
+            if (root == null) {
+//                System.out.println("(0,0,0)");
+                outputWriter.write("(0,0,0)\n");
+            }
+            else {
+                Node node = findNode(buildingNumber);
+                if (node == null) {
+//                    System.out.println("(0,0,0)");
+                    outputWriter.write("(0,0,0)\n");
+                }
+                else {
+//                    System.out.println("(" + node.key + "," + node.executed_time + "," + node.total_time + ")");
+                    outputWriter.write("(" + node.key + "," + node.executed_time + "," + node.total_time + ")\n");
+                }
+            }
+        }
+        catch (IOException e) {
+//            System.out.println("Cannot write to file");
+        }
     }
 
     // Range query (k1,k2). Assume k1 < k2
@@ -588,25 +584,24 @@ public class RedBlackTree{
         if (k1 < node.buildingNum) {
             rangeQuery(outputWriter, node.left, k1, k2);
         }
-
         if (k1 <= node.buildingNum && k2 >= node.buildingNum){
             if (first == true) {
-                System.out.print("(" + node.key + "," + node.executed_time + "," + node.total_time + ")");
+//                System.out.print("(" + node.key + "," + node.executed_time + "," + node.total_time + ")");
                 try {
                     outputWriter.write("(" + node.key + "," + node.executed_time + "," + node.total_time + ")");
                 }
                 catch (IOException e) {
-                    System.out.println("Cannot write to file");
+//                    System.out.println("Cannot write to file");
                 }
                 first = false;
             }
             else {
-                System.out.print(",(" + node.key + "," + node.executed_time + "," + node.total_time + ")");
+//                System.out.print(",(" + node.key + "," + node.executed_time + "," + node.total_time + ")");
                 try {
                     outputWriter.write(",(" + node.key + "," + node.executed_time + "," + node.total_time + ")");
                 }
                 catch (IOException e) {
-                    System.out.println("Cannot write to file");
+//                    System.out.println("Cannot write to file");
                 }
             }
         }
@@ -618,17 +613,26 @@ public class RedBlackTree{
 
     //The printBuilding in range (buildingNumber1, buildingNumber2). Assume buildingNumber1 < buildingNumber2
     public static void PrintBuilding(FileWriter outputWriter, int buildingNumber1, int buildingNumber2) {
-        if (root != null) {
-            rangeQuery(outputWriter, root, buildingNumber1, buildingNumber2);
-            first = true;
-            System.out.println("");
-            try {
+        try {
+            if (root != null) {
+                rangeQuery(outputWriter, root, buildingNumber1, buildingNumber2);
+                if (first == true) {
+//                    System.out.println("(0,0,0)");
+                    outputWriter.write("(0,0,0)\n");
+                }
+                first = true;
+//                System.out.println("");
                 outputWriter.write("\n");
             }
-            catch (IOException e) {
-                System.out.println("Cannot write to file");
+            else {
+//                System.out.println("(0,0,0)");
+                outputWriter.write("(0,0,0)\n");
             }
         }
+        catch (IOException e) {
+//            System.out.println("Cannot write to file");
+        }
+
     }
 
 

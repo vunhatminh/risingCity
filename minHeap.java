@@ -1,6 +1,6 @@
 public class minHeap {
 
-    private static HeapNode[] Heap;      // heap array
+    private static HeapNode[] Heap;     // heap array
     public static int HeapSize;         // current size of heap
     private static int maxSize;         // max size of heap (given 2000)
 
@@ -53,12 +53,12 @@ public class minHeap {
                         || smaller(Heap[rightIndex(node.key)], Heap[node.key])) {
                     if (smaller(Heap[leftIndex(node.key)], Heap[rightIndex(node.key)])) {
                         swap(Heap[node.key],Heap[leftIndex(node.key)]);
-                        // Continue to heapify until leave
+                        // Continue to heapify until leaf
                         heapify(Heap[node.key]);
                     }
                     else {
                         swap(Heap[node.key],Heap[rightIndex(node.key)]);
-                        // Continue to heapify until leave
+                        // Continue to heapify until leaf
                         heapify(Heap[node.key]);
                     }
                 }
@@ -103,7 +103,6 @@ public class minHeap {
             HeapNode node = Heap[1];
             return node;
         } else {
-            System.out.println("Heap is empty");
             return null;
         }
     }
@@ -140,7 +139,17 @@ public class minHeap {
             Heap[node.key].key = node.key;
             Heap[HeapSize] = null;
             HeapSize = HeapSize - 1;
-            heapify(Heap[node.key]);
+
+            int index = node.key;
+            if (smaller(Heap[index], Heap[parentIndex(index)])) {
+                while (smaller(Heap[index], Heap[parentIndex(index)])) {
+                    swap(Heap[index], Heap[parentIndex(index)]);
+                    index = parentIndex(index);
+                }
+            }
+            else {
+                heapify(Heap[node.key]);
+            }
         }
         else {
             Heap[HeapSize] = null;
@@ -205,6 +214,7 @@ public class minHeap {
     public static void printHeap() {
         for (int index = 1; index <= HeapSize/2; index++) {
             System.out.print("Building: " + Heap[index].buildingNum);
+            System.out.print(" | Key: " + Heap[index].key);
             System.out.print(" | Parent: " + Heap[parentIndex(index)].buildingNum);
             if (Heap[leftIndex(index)] != null) {
                 System.out.print(" | Left: " + Heap[leftIndex(index)].buildingNum);
@@ -212,7 +222,7 @@ public class minHeap {
             if (Heap[rightIndex(index)] != null) {
                 System.out.print(" | Right: " + Heap[rightIndex(index)].buildingNum);
             }
+            System.out.println("");
         }
-        System.out.println("");
     }
 }
