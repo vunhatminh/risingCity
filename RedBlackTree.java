@@ -618,7 +618,7 @@ public class RedBlackTree{
                 rangeQuery(outputWriter, root, buildingNumber1, buildingNumber2);
                 if (first == true) {
 //                    System.out.println("(0,0,0)");
-                    outputWriter.write("(0,0,0)\n");
+                    outputWriter.write("(0,0,0)");
                 }
                 first = true;
 //                System.out.println("");
